@@ -27,18 +27,33 @@ namespace NeuralNetwork
     {
         static void Main(string[] args)
         {
-            NT[] ints = new NT[] { (NT)0, (NT)1, (NT)2, (NT)3, (NT)4, (NT)5, (NT)6, (NT)7 };
-            foreach (NT item in ints)
+            //NT[] ints = new NT[] { (NT)0, (NT)1, (NT)2, (NT)3, (NT)4, (NT)5, (NT)6, (NT)7 };
+            //foreach (NT item in ints)
+            //{
+            //    Console.Write($"{item} ");
+            //}
+            //Console.WriteLine("");
+            //int a = ints[2].A;
+            //a = 10;
+            //ints[3] = (NT)10;
+            //foreach (NT item in ints)
+            //{
+
+            //    Console.Write($"{item} ");
+            //}
+            //Console.WriteLine("");
+            //Console.WriteLine("---");
+
+            int[] ints = new int[] { 0, 1, 2, 3, 4, 5, 6, 7 };
+            foreach (int item in ints)
             {
                 Console.Write($"{item} ");
             }
             Console.WriteLine("");
-            int a = ints[2].A;
+            ref int a = ref ints[2];
             a = 10;
-            ints[3] = (NT)10;
-            foreach (NT item in ints)
+            foreach (int item in ints)
             {
-
                 Console.Write($"{item} ");
             }
             Console.WriteLine("");
