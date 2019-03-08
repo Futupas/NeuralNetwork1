@@ -36,12 +36,14 @@ namespace NeuralNetwork
             for (int i = 1; i < Network.Length-1; i++)
             {
                 Network[i][0] = new Neuron(true, Network[i - 1].Length); //bais neuron (first in all hidden layers
+                //Network[i][0] = new Neuron(true, Network[i - 1].Length); //bais neuron (first in all hidden layers
                 for (int j = 1; j < Network[i].Length; j++) //i - layer, j - neuron in layer
                 {
                     Network[i][j] = new Neuron(false, Network[i-1].Length);
                 }
             }
             Network[Network.Length-1][0] = new Neuron(false, Network[Network.Length - 2].Length); //out neuron
+            
 
         }
         public double GetResult(double[] inputs)
@@ -70,30 +72,33 @@ namespace NeuralNetwork
         {
             double actual_output = this.GetResult(inputs);
             // output neuron
-            Neuron out_neuron = Network[Network.Length - 1][0];
-            Network[Network.Length - 1][0].weights_delta = out_neuron.Value * (1 - out_neuron.Value) * (expected_output - out_neuron.Value);
+            ref Neuron out_neuron = ref Network[Network.Length - 1][0];
+            out_neuron.weights_delta = out_neuron.Value * (1 - out_neuron.Value) * (expected_output - out_neuron.Value);
             for (int i = 0; i < out_neuron.Weights.Length; i++)
             {
-                double neuron_out = Network[Network.Length - 2][i].Value;
-                Network[Network.Length - 1][0].Weights[i] += learning_rate * out_neuron.weights_delta * neuron_out;
+                double pref_neuron_value = Network[Network.Length - 2][i].Value;
+                out_neuron.Weights[i] += learning_rate * out_neuron.weights_delta * pref_neuron_value;
             }
             // hidden layers
             for (int i = Network.Length-2; i >= 1; i--) // от предпоследнего до второго (первого скрытого)
             {
-                for (int j = 0; j < Network[i].Length; j++) // each neuron in layer
+                ref Neuron[] layer = ref Network[i];
+                for (int j = 0; j < layer.Length; j++) // each neuron in layer
                 {
-                    if (Network[i][j].is_bais) continue;
+                    ref Neuron neuron = ref layer[j];
+                    if (neuron.is_bais) continue;
                     double weights_delta = 0;
                     for (int ej = 0; ej < Network[i+1].Length; ej++) // for each neuron in next layer
                     {
-                        if (Network[i + 1][ej].is_bais) continue;
-                        weights_delta += (Network[i + 1][ej].weights_delta * Network[i + 1][ej].Weights[j]);
+                        ref Neuron neuron_in_next_layer = ref Network[i + 1][ej];
+                        if (neuron_in_next_layer.is_bais) continue;
+                        weights_delta += (neuron_in_next_layer.weights_delta * neuron_in_next_layer.Weights[j]);
                     }
-                    Network[i][j].weights_delta = weights_delta;
+                    neuron.weights_delta = weights_delta;
 
-                    for (int wj = 0; wj < Network[i][j].Weights.Length; wj++)
+                    for (int wj = 0; wj < neuron.Weights.Length; wj++)
                     {
-                        Network[i][j].Weights[wj] += learning_rate * weights_delta * Network[i - 1][wj].Value;
+                        neuron.Weights[wj] += learning_rate * weights_delta * Network[i - 1][wj].Value;
                     }
                 }
             }

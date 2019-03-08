@@ -7,43 +7,10 @@ using System.Threading.Tasks;
 //http://www.aiportal.ru/articles/neural-networks/back-propagation.html
 namespace NeuralNetwork
 {
-    class NT
-    {
-        public int A;
-        public NT(int a)
-        {
-            this.A = a;
-        }
-        public static explicit operator NT(int value)
-        {
-            return new NT(value);
-        }
-        public override string ToString()
-        {
-            return this.A.ToString();
-        }
-    }
     class Program
     {
         static void Main(string[] args)
         {
-            //NT[] ints = new NT[] { (NT)0, (NT)1, (NT)2, (NT)3, (NT)4, (NT)5, (NT)6, (NT)7 };
-            //foreach (NT item in ints)
-            //{
-            //    Console.Write($"{item} ");
-            //}
-            //Console.WriteLine("");
-            //int a = ints[2].A;
-            //a = 10;
-            //ints[3] = (NT)10;
-            //foreach (NT item in ints)
-            //{
-
-            //    Console.Write($"{item} ");
-            //}
-            //Console.WriteLine("");
-            //Console.WriteLine("---");
-
             int[] ints = new int[] { 0, 1, 2, 3, 4, 5, 6, 7 };
             foreach (int item in ints)
             {
@@ -63,7 +30,7 @@ namespace NeuralNetwork
 
 
             NN ntw = new NN(
-                layers_count: 2, 
+                layers_count: 1, 
                 neurons_count: 4, 
                 inputs_count: 2, 
                 learning_rate: .1);
@@ -83,12 +50,12 @@ namespace NeuralNetwork
 
             //for (int j = 0; j < 100; j++)
             //{
-                for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 10000; i++)
                 {
-                    ntw.Teach(new double[] { 0, 0 }, 0);
-                    ntw.Teach(new double[] { 0, 1 }, 1);
-                    ntw.Teach(new double[] { 1, 0 }, 1);
-                    ntw.Teach(new double[] { 1, 1 }, 0);
+                ntw.Teach(new double[] { 0, 0 }, 0);
+                ntw.Teach(new double[] { 0, 1 }, 1);
+                ntw.Teach(new double[] { 1, 0 }, 1);
+                ntw.Teach(new double[] { 1, 1 }, 0);
             }
             //    for (int i = 0; i < 100; i++)
             //    {
