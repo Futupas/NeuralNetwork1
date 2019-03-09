@@ -14,10 +14,10 @@ namespace NeuralNetwork
         {
             Console.Title = "";
             NN ntw = new NN(
-                layers_count: 1, 
+                layers_count: 2, 
                 neurons_count: 4, 
                 inputs_count: 2, 
-                learning_rate: .01);
+                learning_rate: .1);
 
             double[] vals = new double[4] { 0, 0, 0, 0 };
             double[] oldvals = new double[4];// = vals;
@@ -41,7 +41,9 @@ namespace NeuralNetwork
                 ntw.Teach(new double[] { 0, 0 }, 0);
                 ntw.Teach(new double[] { 0, 1 }, 1);
                 ntw.Teach(new double[] { 1, 0 }, 1);
-                //ntw.Teach(new double[] { 1, 1 }, 0);
+                ntw.Teach(new double[] { 1, 1 }, 0);
+
+
 
                 vals[0] = ntw.GetResult(new double[] { 0, 0 });
                 vals[1] = ntw.GetResult(new double[] { 0, 1 });
