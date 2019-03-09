@@ -17,7 +17,7 @@ namespace NeuralNetwork
                 layers_count: 2, 
                 neurons_count: 4, 
                 inputs_count: 2, 
-                learning_rate: .1);
+                learning_rate: .05);
 
             double[] vals = new double[4] { 0, 0, 0, 0 };
             double[] oldvals = new double[4];// = vals;
@@ -36,7 +36,7 @@ namespace NeuralNetwork
             oldvals[2] = vals[2];
             oldvals[3] = vals[3];
 
-            for (int i = 0; i < 1000000; i++)
+            for (int i = 0; i < 10000000; i++)
             {
                 ntw.Teach(new double[] { 0, 0 }, 0);
                 ntw.Teach(new double[] { 0, 1 }, 1);
@@ -95,8 +95,7 @@ namespace NeuralNetwork
                 //Console.Write(ntw.GetResult(new double[] { 1, 1 }));
                 //Console.WriteLine("");
             }
-
-            Console.WriteLine("--");
+            
             
 
 

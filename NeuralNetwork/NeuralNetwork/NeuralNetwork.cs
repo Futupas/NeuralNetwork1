@@ -9,6 +9,7 @@ namespace NeuralNetwork
     class NN
     {
         public Neuron[][] Network;
+        public Random random = new Random();
         protected readonly int layers_count;
         protected readonly int neurons_count;
         protected readonly int inputs_count;
@@ -31,18 +32,18 @@ namespace NeuralNetwork
 
             for (int j = 0; j < Network[0].Length; j++) //i - layer, j - neuron in layer
             {
-                Network[0][j] = new Neuron(false, inputs_count);
+                Network[0][j] = new Neuron(false, 0, random);
             }
-            for (int i = 1; i < Network.Length-1; i++)
+            for (int i = 1; i < Network.Length-1; i++) // for each hidden layer
             {
-                Network[i][0] = new Neuron(true, Network[i - 1].Length); //bais neuron (first in all hidden layers
-                //Network[i][0] = new Neuron(true, Network[i - 1].Length); //bais neuron (first in all hidden layers
+                Network[i][0] = new Neuron(true, 0, random); //bias neuron (first in all hidden layers
+                //Network[i][0] = new Neuron(true, Network[i - 1].Length); //bias neuron (first in all hidden layers
                 for (int j = 1; j < Network[i].Length; j++) //i - layer, j - neuron in layer
                 {
-                    Network[i][j] = new Neuron(false, Network[i-1].Length);
+                    Network[i][j] = new Neuron(false, Network[i-1].Length, random);
                 }
             }
-            Network[Network.Length-1][0] = new Neuron(false, Network[Network.Length - 2].Length); //out neuron
+            Network[Network.Length-1][0] = new Neuron(false, Network[Network.Length - 2].Length, random); //out neuron
             
 
         }
@@ -76,8 +77,8 @@ namespace NeuralNetwork
             out_neuron.weights_delta = out_neuron.Value * (1 - out_neuron.Value) * (expected_output - out_neuron.Value);
             for (int i = 0; i < out_neuron.Weights.Length; i++)
             {
-                double pref_neuron_value = Network[Network.Length - 2][i].Value;
-                out_neuron.Weights[i] += learning_rate * out_neuron.weights_delta * pref_neuron_value;
+                double prev_neuron_value = Network[Network.Length - 2][i].Value;
+                out_neuron.Weights[i] += (learning_rate * out_neuron.weights_delta * prev_neuron_value);
             }
             // hidden layers
             for (int i = Network.Length-2; i >= 1; i--) // от предпоследнего до второго (первого скрытого)
@@ -86,19 +87,19 @@ namespace NeuralNetwork
                 for (int j = 0; j < layer.Length; j++) // each neuron in layer
                 {
                     ref Neuron neuron = ref layer[j];
-                    if (neuron.is_bais) continue;
+                    //if (neuron.is_bias) continue;
                     double weights_delta = 0;
                     for (int ej = 0; ej < Network[i+1].Length; ej++) // for each neuron in next layer
                     {
                         ref Neuron neuron_in_next_layer = ref Network[i + 1][ej];
-                        if (neuron_in_next_layer.is_bais) continue;
+                        if (neuron_in_next_layer.is_bias) continue;
                         weights_delta += (neuron_in_next_layer.weights_delta * neuron_in_next_layer.Weights[j]);
                     }
                     neuron.weights_delta = weights_delta;
 
                     for (int wj = 0; wj < neuron.Weights.Length; wj++)
                     {
-                        neuron.Weights[wj] += learning_rate * weights_delta * Network[i - 1][wj].Value;
+                        neuron.Weights[wj] += (learning_rate * weights_delta * Network[i - 1][wj].Value);
                     }
                 }
             }
@@ -119,11 +120,11 @@ namespace NeuralNetwork
     {
         public double[] Weights; //input 
         public double Value;
-        public bool is_bais = false;
+        public bool is_bias = false;
         public double weights_delta;
         public double GetResult(double[] values)
         {
-            if (this.is_bais)
+            if (this.is_bias)
             {
                 return 1;
             }
@@ -138,20 +139,20 @@ namespace NeuralNetwork
             }
         }
 
-        protected double ActivationFunction (double x) // Sigmoid
+        public double ActivationFunction (double x) // Sigmoid
         {
             return 1 / (1 + Math.Exp(x * -1));
         }
 
-        public Neuron(bool is_bais, double[] input_weights)
+        public Neuron(bool is_bias, double[] input_weights, Random random)
         {
-            this.is_bais = is_bais;
-            this.Weights = this.is_bais ? new double[0] : input_weights;
+            this.is_bias = is_bias;
+            this.Weights = this.is_bias ? new double[0] : input_weights;
         }
-        public Neuron(bool is_bais, int input_weights_count)
+        public Neuron(bool is_bias, int input_weights_count, Random random)
         {
-            this.is_bais = is_bais;
-            if (this.is_bais)
+            this.is_bias = is_bias;
+            if (this.is_bias)
             {
                 this.Weights = new double[0];
             }
@@ -160,7 +161,8 @@ namespace NeuralNetwork
                 this.Weights = new double[input_weights_count];
                 for (int i = 0; i < Weights.Length; i++)
                 {
-                    this.Weights[i] = (new Random().NextDouble()) / 2 + .25;
+                    this.Weights[i] = (random.NextDouble());
+                    //this.Weights[i] = (random.NextDouble()) / 2 + .25;
                 }
             }
             
