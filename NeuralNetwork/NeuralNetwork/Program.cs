@@ -14,10 +14,10 @@ namespace NeuralNetwork
         {
             Console.Title = "";
             NN ntw = new NN(
-                layers_count: 2, 
-                neurons_count: 4, 
+                layers_count: 1, 
+                neurons_count: 3, 
                 inputs_count: 2, 
-                learning_rate: .05);
+                learning_rate: .1);
 
             double[] vals = new double[4] { 0, 0, 0, 0 };
             double[] oldvals = new double[4];// = vals;
@@ -36,12 +36,17 @@ namespace NeuralNetwork
             oldvals[2] = vals[2];
             oldvals[3] = vals[3];
 
+            //https://ai.stackexchange.com/questions/6167/what-is-the-best-xor-neural-network-configuration-out-there-in-terms-of-low-erro
+            ntw.Network[1][1].Weights = new double[] { 10.0676, -6.6619, -6.3597 };
+            ntw.Network[1][2].Weights = new double[] { 2.8261, -5.9874, -9.9025 };
+            ntw.Network[2][0].Weights = new double[] { -4.6458, 9.461, -9.9307 };
+
             for (int i = 0; i < 10000000; i++)
             {
-                ntw.Teach(new double[] { 0, 0 }, 0);
-                ntw.Teach(new double[] { 0, 1 }, 1);
-                ntw.Teach(new double[] { 1, 0 }, 1);
-                ntw.Teach(new double[] { 1, 1 }, 0);
+                //ntw.Teach(new double[] { 0, 0 }, 0);
+                //ntw.Teach(new double[] { 0, 1 }, 1);
+                //ntw.Teach(new double[] { 1, 0 }, 1);
+                //ntw.Teach(new double[] { 1, 1 }, 0);
 
 
 
