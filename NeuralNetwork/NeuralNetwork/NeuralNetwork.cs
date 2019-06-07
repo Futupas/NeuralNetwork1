@@ -70,12 +70,12 @@ namespace NeuralNetwork
             return Network[Network.Length - 1][0].Value;
         }
 
-        public void Teach(double[] inputs, double expected_output)
+        public void Teach2(double[] inputs, double expected_output)
         {
             double actual_output = this.GetResult(inputs);
             // output neuron
-            ref Neuron out_neuron = ref Network[Network.Length - 1][0];
-            out_neuron.weights_delta = out_neuron.Value * (1 - out_neuron.Value) * (expected_output - out_neuron.Value);
+            ref Neuron out_neuron = ref this.Network[Network.Length - 1][0];
+            out_neuron.weights_delta = out_neuron.Value * (1 - out_neuron.Value) * (expected_output - actual_output);
             for (int i = 0; i < out_neuron.Weights.Length; i++)
             {
                 double prev_neuron_value = Network[Network.Length - 2][i].Value;
@@ -106,7 +106,51 @@ namespace NeuralNetwork
             }
 
         }
-        
+
+        public void Teach(double[] inputs, double expected_output)
+        {
+            double actual_output = this.GetResult(inputs);
+            // output neuron
+            ref Neuron out_neuron = ref this.Network[Network.Length - 1][0];
+            out_neuron.weights_delta = expected_output - actual_output;
+
+            for (int i = Network.Length-2; i >= 1; i--)
+            {
+                ref Neuron[] layer = ref Network[i];
+                ref Neuron[] next_layer = ref Network[i + 1];
+                for (int j = 0; j < layer.Length; j++)
+                {
+                    double new_w_delta = 0;
+                    for (int nj = 0; nj < next_layer.Length; nj++)
+                    {
+                        if (next_layer[nj].is_bias) continue;
+                        new_w_delta += (next_layer[nj].weights_delta * next_layer[nj].Weights[j]);
+                    }
+                    layer[j].weights_delta = new_w_delta;
+                }
+            }
+
+            for (int i = 1; i < Network.Length; i++)
+            {
+                ref Neuron[] layer = ref Network[i];
+                ref Neuron[] prev_layer = ref Network[i - 1];
+                for (int j = 0; j < layer.Length; j++)
+                {
+                    ref Neuron neuron = ref layer[j];
+                    if (neuron.is_bias) continue;
+
+                    for (int wj = 0; wj < neuron.Weights.Length; wj++)
+                    {
+                        neuron.Weights[wj] =
+                            neuron.Weights[wj] + (neuron.weights_delta * neuron.Value * (1 - neuron.Value) * prev_layer[wj].Value * learning_rate);
+                    }
+
+                }
+            }
+
+
+        }
+
 
         protected static double Derivative(double sigmoid_x) // derivative of sigmoid function
         {
@@ -123,6 +167,7 @@ namespace NeuralNetwork
         public double Value;
         public bool is_bias = false;
         public double weights_delta;
+        public double x = 0;
         public double GetResult(double[] values)
         {
             if (this.is_bias)
@@ -136,6 +181,7 @@ namespace NeuralNetwork
                 {
                     x += (values[i] * this.Weights[i]);
                 }
+                this.x = x;
                 return this.ActivationFunction(x);
             }
         }
@@ -162,8 +208,12 @@ namespace NeuralNetwork
                 this.Weights = new double[input_weights_count];
                 for (int i = 0; i < Weights.Length; i++)
                 {
-                    this.Weights[i] = (random.NextDouble());
-                    //this.Weights[i] = (random.NextDouble()) / 2 + .25;
+                    //this.Weights[i] = (random.NextDouble()) - .5;
+
+                    //this.Weights[i] = (random.NextDouble() * .8) - .4;
+                    //this.Weights[i] += this.Weights[i] >= 0 ? .1 : -.1;
+                    
+                    this.Weights[i] = (random.NextDouble() * .5) + .1;
                 }
             }
             

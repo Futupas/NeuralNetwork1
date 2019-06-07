@@ -12,6 +12,13 @@ namespace NeuralNetwork
     {
         static void Main(string[] args)
         {
+            //Random r = new Random();
+            //while (true)
+            //{
+            //    Console.WriteLine(r.NextDouble());
+            //}
+
+
             Console.Title = "";
             NN ntw = new NN(
                 layers_count: 1, 
@@ -37,16 +44,16 @@ namespace NeuralNetwork
             oldvals[3] = vals[3];
 
             //https://ai.stackexchange.com/questions/6167/what-is-the-best-xor-neural-network-configuration-out-there-in-terms-of-low-erro
-            ntw.Network[1][1].Weights = new double[] { 10.0676, -6.6619, -6.3597 };
-            ntw.Network[1][2].Weights = new double[] { 2.8261, -5.9874, -9.9025 };
-            ntw.Network[2][0].Weights = new double[] { -4.6458, 9.461, -9.9307 };
+            //ntw.Network[1][1].Weights = new double[] { 10.0676, -6.6619, -6.3597 };
+            //ntw.Network[1][2].Weights = new double[] { 2.8261, -5.9874, -9.9025 };
+            //ntw.Network[2][0].Weights = new double[] { -4.6458, 9.461, -9.9307 };
 
             for (int i = 0; i < 10000000; i++)
             {
-                //ntw.Teach(new double[] { 0, 0 }, 0);
-                //ntw.Teach(new double[] { 0, 1 }, 1);
-                //ntw.Teach(new double[] { 1, 0 }, 1);
-                //ntw.Teach(new double[] { 1, 1 }, 0);
+                ntw.Teach(new double[] { 0, 1 }, 1);
+                ntw.Teach(new double[] { 1, 0 }, 1);
+                ntw.Teach(new double[] { 0, 0 }, 0);
+                ntw.Teach(new double[] { 1, 1 }, 0);
 
 
 
@@ -55,7 +62,8 @@ namespace NeuralNetwork
                 vals[2] = ntw.GetResult(new double[] { 1, 0 });
                 vals[3] = ntw.GetResult(new double[] { 1, 1 });
 
-                //
+
+               
                 string title = "";
                 //title += (vals[0] == oldvals[0] ? "E" : vals[0] < oldvals[0] ? "D" : "U") + "  ";
                 //title += (vals[1] == oldvals[1] ? "E" : vals[1] < oldvals[1] ? "D" : "U") + "  ";
